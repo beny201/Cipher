@@ -30,7 +30,7 @@ class Manager:
     @staticmethod
     def user_choice_action() -> int:
         while True:
-            user_input = input("Please write what do you want to do: ")
+            user_input = input("Please write number of desired actions: ")
             try:
                 user_choice = int(user_input)
                 return user_choice
@@ -47,7 +47,7 @@ class Manager:
         user_choice = (input("Please write name of file: "))
         return user_choice
 
-    def process_encryption(self):
+    def process_encryption(self, ) -> None:
         self.menu.show_submenu()
         user_choice = self.user_choice_action_validation_sub_menu()
         user_message_to_encrypt = self.user_message()
@@ -55,37 +55,54 @@ class Manager:
                                            user_message_to_encrypt)
         self.buffer.append_text(message_to_stock)
 
-    def user_choice_action_validation_sub_menu(self):
+    def process_decryption(self, ) -> None:
+        self.menu.show_submenu()
+        user_choice = self.user_choice_action_validation_sub_menu()
+        user_message_to_decrypt = self.user_message()
+        message_to_stock = self.decryption(user_choice,
+                                           user_message_to_decrypt)
+        self.buffer.append_text(message_to_stock)
+
+    def user_choice_action_validation_sub_menu(self) -> int:
         check_on = True
         while check_on:
             scope = len(self.menu.actions_submenu)
             try:
                 user_choice = self.user_choice_action()
-                if user_choice >= scope or user_choice <= 0:
+                if user_choice > scope or user_choice <= 0:
                     raise ValueError()
                 else:
                     check_on = False
                     return user_choice
             except ValueError:
-                print((f"This need to be from 1 to {scope}"))
+                print(f"This need to be from 1 to {scope}")
 
-    def encryption(self, user_choice, message_to_encrypt):
+    @staticmethod
+    def encryption(user_choice, message_to_encrypt):
         if user_choice == 1:
             encrypted_message = Rot13(message_to_encrypt).rot()
             message_to_stock = Text(encrypted_message, "Rot13", "Encrypted")
-            print(f"Encrypted: {encrypted_message}/ This will be stocked")
+            print(f"Encrypted: {encrypted_message} - This will be stocked")
             return message_to_stock
         elif user_choice == 2:
             encrypted_message = Rot47(message_to_encrypt).rot()
             message_to_stock = Text(encrypted_message, "Rot47", "Encrypted")
-            print(f"Encrypted: {encrypted_message}/ This will be stocked")
+            print(f"Encrypted: {encrypted_message} - This will be stocked")
             return message_to_stock
-        else:
-            print(
-                f"Please chose no from range 1 - {len(self.menu.actions_submenu)}")
 
-    def process_decryption(self):
-        pass
+    @staticmethod
+    def decryption(user_choice, message_to_decrypt):
+        if user_choice == 1:
+            encrypted_message = Rot13(message_to_decrypt).rot()
+            message_to_stock = Text(encrypted_message, "Rot13", "Decrypted")
+            print(f"Encrypted: {encrypted_message} - This will be stocked")
+            return message_to_stock
+        elif user_choice == 2:
+            encrypted_message = Rot47(message_to_decrypt).rot()
+            message_to_stock = Text(encrypted_message, "Rot47", "Decrypted")
+            print(f"Encrypted: {encrypted_message} - This will be stocked")
+            return message_to_stock
+
 
     def execute_main(self, user_choice: int):
         if user_choice in self.action_main.keys():
