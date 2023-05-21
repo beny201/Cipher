@@ -1,7 +1,8 @@
 import json
+from typing import List
 
 
-def saving_file(name: str, data: dict) -> None:
+def saving_file(name: str, data: List[dict]) -> None:
     try:
         with open(f"{name}.json", "r") as f:
             file_exist = True
@@ -11,7 +12,8 @@ def saving_file(name: str, data: dict) -> None:
         if file_exist:
             with open(f"{name}.json", "r+") as json_file:
                 existing_data = json.load(json_file)
-                existing_data.append(data)
+                for files in data:
+                    existing_data.append(files)
             with open(f"{name}.json", "w") as json_file:
                 json.dump(existing_data, json_file, indent=4)
         else:
