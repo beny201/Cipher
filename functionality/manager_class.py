@@ -58,7 +58,7 @@ class Manager:
     def user_choice_action_validation_sub_menu(self):
         check_on = True
         while check_on:
-            scope = len(self.menu.actions_submenu) + 1
+            scope = len(self.menu.actions_submenu)
             try:
                 user_choice = self.user_choice_action()
                 if user_choice >= scope or user_choice <= 0:
