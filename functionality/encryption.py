@@ -9,11 +9,6 @@ class Text:
     _rot_type: Optional[str] = None
     _status: str = "decrypted"
 
-    """def __repr__(self):
-        return f"Text: {self._message}, Rot type: {self._rot_type}, Status: " \
-               f"{self._status}"""
-
-    # def to_dct(self):
     @property
     def message(self):
         return self._message
@@ -53,6 +48,10 @@ class Text:
             raise ValueError("This need to be string")
         else:
             self._message = txt
+
+    def show_info(self):
+        return (f"Message: {self._message}, Rot type: {self._rot_type}, "
+                f"Status: {self._status}")
 
 
 class Rot(ABC):
@@ -97,6 +96,7 @@ class Rot47(Rot):
     def rot(self):
         encrypted = ''.join(self.rot_c(c) for c in self._message)
         return encrypted
+
 
 def main():
     objet2 = Text("asdasd")
