@@ -24,11 +24,17 @@ def saving_file(name: str, data: List[dict]) -> None:
         print("Seems there is issue with saving")
 
 
-# jak to zrobic na dictcie? Nie udalo mi sie dodac dicta, wiec jest lista
-def reading_file(name: str) -> str:
-    try:
-        with open(f"{name}.json", "r") as json_file:
-            data = json.load(json_file)
-            return data
-    except FileNotFoundError:
-        print("There is no file with this name ")
+# jak to zrobic na dictcie? albo dodac nazwe  Nie udalo mi sie dodac dicta,
+# wiec jest lista
+def reading_file(name: str) -> List[dict]:
+    with open(f"{name}.json", "r") as json_file:
+        data = json.load(json_file)
+        return data
+
+
+def main():
+    reading_file("z")
+
+
+if __name__ == "__main__":
+    main()
