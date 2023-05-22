@@ -17,9 +17,10 @@ class Manager:
             1: self.process_encryption,
             2: self.process_decryption,
             3: self.buffer.read_contents,
-            4: self.saving_file_manager,
-            5: self.reading_file_manager,
-            6: self.finish
+            4: self.buffer.remove_text,
+            5: self.saving_file_manager,
+            6: self.reading_file_manager,
+            7: self.finish
         }
 
     def run(self) -> None:
@@ -129,7 +130,7 @@ class Manager:
             except FileNotFoundError:
                 print("Seems there is no file")
 
-    def converting_saved_files_to_text(self, file) -> None:
+    def converting_saved_files_to_text(self, file: List[dict]) -> None:
         for data in file:
             message = data["_message"]
             rot_type = data["_rot_type"]
@@ -137,22 +138,26 @@ class Manager:
             self.buffer.append_text(Text(message, rot_type, status))
 
     def finish(self):
-        self.working = False
+        possibility_to_save = input("Do you want to save before exit? Y/N: ")
+        if possibility_to_save.lower() == "y":
+            self.saving_file_manager()
+        else:
+            self.working = False
 
 
 def main():
     obiekt1 = Manager()
     # obiekt1.run()
+    obiekt2 = Text()
+    obiekt1.buffer.append_text(obiekt2)
     # obiekt2 = Text()
     # obiekt1.buffer.append_text(obiekt2)
-    # obiekt2 = Text()
-    # obiekt1.buffer.append_text(obiekt2)
-    # zapis = obiekt1.buffer.data_for_saving()
+    zapis = obiekt1.buffer.data_for_saving()
 
     # obiekt1.procces_encrytpion()
     # obiekt1.buffer.read_contents()
-    # saving_file("marian", zapis)
-    data = reading_file("w")
+    saving_file("marian", zapis)
+    #data = reading_file("w")
     # obiekt1.converting_saved_files_to_text(data)
     # obiekt1.buffer.read_contents()
     # print(data)
