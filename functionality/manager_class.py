@@ -1,7 +1,8 @@
-from menu_class import Menu
-from buffer import Buffer
-from encryption import Text, Rot13, Rot47
-from file_handler import saving_file, reading_file
+from typing import List, Dict
+from functionality.menu_class import Menu
+from functionality.buffer import Buffer
+from functionality.encryption import Text, Rot13, Rot47
+from functionality.file_handler import saving_file, reading_file
 
 
 class Manager:
@@ -103,7 +104,6 @@ class Manager:
             print(f"Encrypted: {encrypted_message} - This will be stocked")
             return message_to_stock
 
-
     def execute_main(self, user_choice: int):
         if user_choice in self.action_main.keys():
             return self.action_main[user_choice]()
@@ -113,11 +113,28 @@ class Manager:
     def saving_file_manager(self):
         name_file = self.user_name_file()
         files_to_save = self.buffer.data_for_saving()
-        print(files_to_save)
         saving_file(name_file, files_to_save)
 
     def reading_file_manager(self):
-        pass
+        data_to_read = self.reading_file_to_convert()
+        self.converting_saved_files_to_text(data_to_read)
+
+    def reading_file_to_convert(self) -> List[dict]:
+        check_on = True
+        while check_on:
+            name_file = self.user_name_file()
+            try:
+                data = reading_file(name_file)
+                return data
+            except FileNotFoundError:
+                print("Seems there is no file")
+
+    def converting_saved_files_to_text(self, file) -> None:
+        for data in file:
+            message = data["_message"]
+            rot_type = data["_rot_type"]
+            status = data["_status"]
+            self.buffer.append_text(Text(message, rot_type, status))
 
     def finish(self):
         self.working = False
@@ -125,15 +142,19 @@ class Manager:
 
 def main():
     obiekt1 = Manager()
-    obiekt1.run()
-    # obiekt3 = Text("asdasd")
-    # obiekt1.buffer.append_text(obiekt3)
+    # obiekt1.run()
+    # obiekt2 = Text()
+    # obiekt1.buffer.append_text(obiekt2)
+    # obiekt2 = Text()
+    # obiekt1.buffer.append_text(obiekt2)
     # zapis = obiekt1.buffer.data_for_saving()
 
     # obiekt1.procces_encrytpion()
     # obiekt1.buffer.read_contents()
-    # saving_file("marian", *zapis)
-    # data = reading_file("marian")
+    # saving_file("marian", zapis)
+    data = reading_file("w")
+    # obiekt1.converting_saved_files_to_text(data)
+    # obiekt1.buffer.read_contents()
     # print(data)
 
 
