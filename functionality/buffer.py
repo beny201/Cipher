@@ -1,5 +1,5 @@
 from typing import List, Dict
-from encryption import Text
+from functionality.encryption import Text
 from dataclasses import asdict
 
 
@@ -15,8 +15,8 @@ class Buffer:
 
     def read_contents(self):
         if len(self.temporary_container) >= 1:
-            for text in self.temporary_container:
-                print(text)
+            for i, text in enumerate(self.temporary_container, 1):
+                print(f"{i}. {text.show_info()}")
         else:
             print("Container is empty")
 
@@ -26,8 +26,7 @@ class Buffer:
 
 def main():
     objet2 = Buffer()
-
-    #objet2.append_text(Text())
+    objet2.append_text(Text())
     #objet2.append_text(Text())
     #objet2.append_text(Text())
     objet2.read_contents()
