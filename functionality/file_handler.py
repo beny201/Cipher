@@ -27,19 +27,9 @@ def saving_file(name: str, data: List[dict]) -> None:
         print("Seems there is issue with saving")
 
 
-# jak to zrobic na dictcie? albo dodac nazwe  Nie udalo mi sie dodac dicta,
-# wiec jest lista
 def reading_file(name: str) -> List[dict]:
     folder = "json_files"
     file_path = os.path.join(folder, name)
     with open(f"{file_path}.json", "r") as json_file:
         data = json.load(json_file)
         return data
-
-
-def main():
-    reading_file("z")
-
-
-if __name__ == "__main__":
-    main()

@@ -1,4 +1,4 @@
-from functionality.manager_class import Manager
+from functionality.manager import Manager
 
 
 def main():

@@ -1,13 +1,16 @@
 from typing import List, Dict
-from functionality.menu_class import Menu
+from functionality.menu import Menu
 from functionality.buffer import Buffer
-from functionality.encryption import Text, Rot13, Rot47
+from functionality.encryption import Rot13, Rot47
+from functionality.text import Text
 from functionality.file_handler import saving_file, reading_file
 
 
 class Manager:
+    available_rots = {1: (Rot13, "Rot13"), 2: (Rot47, "Rot47")}
+
     def __init__(self) -> None:
-        self.working = True
+        self._is_running = True
         self.menu = Menu()
         self.rot13 = Rot13()
         self.rot47 = Rot47()
@@ -20,11 +23,11 @@ class Manager:
             4: self.buffer.remove_text,
             5: self.saving_file_manager,
             6: self.reading_file_manager,
-            7: self.finish
+            7: self.finish,
         }
 
     def run(self) -> None:
-        while self.working:
+        while self._is_running:
             self.menu.show()
             user_choice = self.user_choice_action()
             self.execute_main(user_choice)
@@ -40,29 +43,27 @@ class Manager:
                 print("Please write valid number")
 
     @staticmethod
-    def user_message() -> str:
-        user_choice = (input("Please write message: "))
+    def get_user_message() -> str:
+        user_choice = input("Please write message: ")
         return user_choice
 
     @staticmethod
-    def user_name_file() -> str:
-        user_choice = (input("Please write name of file: "))
+    def get_user_file_name() -> str:
+        user_choice = input("Please write name of file: ")
         return user_choice
 
-    def process_encryption(self, ) -> None:
+    def process_encryption(self) -> None:
         self.menu.show_submenu()
         user_choice = self.user_choice_action_validation_sub_menu()
-        user_message_to_encrypt = self.user_message()
-        message_to_stock = self.encryption(user_choice,
-                                           user_message_to_encrypt)
+        user_message_to_encrypt = self.get_user_message()
+        message_to_stock = self.encryption(user_choice, user_message_to_encrypt)
         self.buffer.append_text(message_to_stock)
 
-    def process_decryption(self, ) -> None:
+    def process_decryption(self) -> None:
         self.menu.show_submenu()
         user_choice = self.user_choice_action_validation_sub_menu()
-        user_message_to_decrypt = self.user_message()
-        message_to_stock = self.decryption(user_choice,
-                                           user_message_to_decrypt)
+        user_message_to_decrypt = self.get_user_message()
+        message_to_stock = self.decryption(user_choice, user_message_to_decrypt)
         self.buffer.append_text(message_to_stock)
 
     def user_choice_action_validation_sub_menu(self) -> int:
@@ -80,50 +81,44 @@ class Manager:
                 print(f"This need to be from 1 to {scope}")
 
     @staticmethod
-    def encryption(user_choice, message_to_encrypt):
-        if user_choice == 1:
-            encrypted_message = Rot13(message_to_encrypt).rot()
-            message_to_stock = Text(encrypted_message, "Rot13", "Encrypted")
-            print(f"Encrypted: {encrypted_message} - This will be stocked")
-            return message_to_stock
-        elif user_choice == 2:
-            encrypted_message = Rot47(message_to_encrypt).rot()
-            message_to_stock = Text(encrypted_message, "Rot47", "Encrypted")
+    def encryption(user_choice: int, message_to_encrypt: str) -> Text | None:
+        rot = Manager.available_rots.get(user_choice)
+        if rot is not None:
+            rot_obj, rot_type = rot
+            encrypted_message = rot_obj(message_to_encrypt).rot()
+            message_to_stock = Text(encrypted_message, rot_type, "Encrypted")
             print(f"Encrypted: {encrypted_message} - This will be stocked")
             return message_to_stock
 
     @staticmethod
-    def decryption(user_choice, message_to_decrypt):
-        if user_choice == 1:
-            encrypted_message = Rot13(message_to_decrypt).rot()
-            message_to_stock = Text(encrypted_message, "Rot13", "Decrypted")
-            print(f"Encrypted: {encrypted_message} - This will be stocked")
-            return message_to_stock
-        elif user_choice == 2:
-            encrypted_message = Rot47(message_to_decrypt).rot()
-            message_to_stock = Text(encrypted_message, "Rot47", "Decrypted")
+    def decryption(user_choice: int, message_to_decrypt: str) -> Text:
+        rot = Manager.available_rots.get(user_choice)
+        if rot is not None:
+            rot_obj, rot_type = rot
+            encrypted_message = rot_obj(message_to_decrypt).rot()
+            message_to_stock = Text(encrypted_message, rot_type, "Decrypted")
             print(f"Encrypted: {encrypted_message} - This will be stocked")
             return message_to_stock
 
-    def execute_main(self, user_choice: int):
+    def execute_main(self, user_choice: int) -> None:
         if user_choice in self.action_main.keys():
             return self.action_main[user_choice]()
         else:
             print(f"Please chose no from range 1 - {len(self.action_main)}")
 
-    def saving_file_manager(self):
-        name_file = self.user_name_file()
+    def saving_file_manager(self) -> None:
+        name_file = self.get_user_file_name()
         files_to_save = self.buffer.data_for_saving()
         saving_file(name_file, files_to_save)
 
-    def reading_file_manager(self):
+    def reading_file_manager(self) -> None:
         data_to_read = self.reading_file_to_convert()
         self.converting_saved_files_to_text(data_to_read)
 
     def reading_file_to_convert(self) -> List[dict]:
         check_on = True
         while check_on:
-            name_file = self.user_name_file()
+            name_file = self.get_user_file_name()
             try:
                 data = reading_file(name_file)
                 return data
@@ -137,31 +132,9 @@ class Manager:
             status = data["_status"]
             self.buffer.append_text(Text(message, rot_type, status))
 
-    def finish(self):
+    def finish(self) -> None:
         possibility_to_save = input("Do you want to save before exit? Y/N: ")
         if possibility_to_save.lower() == "y":
             self.saving_file_manager()
         else:
-            self.working = False
-
-
-def main():
-    obiekt1 = Manager()
-    # obiekt1.run()
-    obiekt2 = Text()
-    obiekt1.buffer.append_text(obiekt2)
-    # obiekt2 = Text()
-    # obiekt1.buffer.append_text(obiekt2)
-    zapis = obiekt1.buffer.data_for_saving()
-
-    # obiekt1.procces_encrytpion()
-    # obiekt1.buffer.read_contents()
-    saving_file("marian", zapis)
-    #data = reading_file("w")
-    # obiekt1.converting_saved_files_to_text(data)
-    # obiekt1.buffer.read_contents()
-    # print(data)
-
-
-if __name__ == "__main__":
-    main()
+            self._is_running = False

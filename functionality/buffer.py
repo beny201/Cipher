@@ -1,5 +1,5 @@
 from typing import List, Dict
-from functionality.encryption import Text
+from functionality.text import Text
 from dataclasses import asdict
 
 
@@ -8,15 +8,12 @@ class Buffer:
         self.temporary_container: List[Text] = []
 
     def data_for_saving(self) -> List[Dict]:
-        dic_to_save = []
-        for text in self.temporary_container:
-            dic_to_save.append(asdict(text))
-        return dic_to_save
+        return [asdict(text) for text in self.temporary_container]
 
-    def read_contents(self):
+    def read_contents(self) -> None:
         if len(self.temporary_container) >= 1:
             print()
-            for i, text in enumerate(self.temporary_container, 1):
+            for i, text in enumerate(self.temporary_container, start=1):
                 print(f"{i}. {text.show_info()}")
         else:
             print("Container is empty")
@@ -39,22 +36,6 @@ class Buffer:
     def remove_message(self, position_to_remove: int) -> None:
         self.temporary_container.pop(position_to_remove)
 
-    def remove_text(self):
+    def remove_text(self) -> None:
         user_choice_to_remove = self.user_action()
         self.remove_message(user_choice_to_remove)
-
-def main():
-    objet2 = Buffer()
-    objet2.append_text(Text())
-    objet2.append_text(Text())
-    # objet2.append_text(Text())
-    # objet2.append_text(Text())
-    objet2.read_contents()
-    print(len(objet2.temporary_container))
-    value = objet2.user_action()
-    objet2.remove_text(value)
-    objet2.read_contents()
-
-
-if __name__ == "__main__":
-    main()

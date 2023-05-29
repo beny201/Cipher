@@ -1,23 +1,20 @@
 import pytest
-from functionality.manager_class import *
+from functionality.manager import Manager
+from functionality.text import Text
+from functionality.buffer import Buffer
 
 
 def test_should_return_false(mocker):
     manager = Manager()
-    mock_object = mocker.patch('builtins.input')
+    mock_object = mocker.patch("builtins.input")
     mock_object.object.return_value = "n"
     manager.finish()
-    assert manager.working == False
+    assert manager._is_running == False
 
 
 def test_should_add_text_to_list_from_saved_files():
     manager = Manager()
-    buffer = Buffer()
-    data = [{
-        "_message": "Approve",
-        "_rot_type": "Test",
-        "_status": "Added"
-    }]
+    data = [{"_message": "Approve", "_rot_type": "Test", "_status": "Added"}]
     manager.converting_saved_files_to_text(data)
     assert len(manager.buffer.temporary_container) == 1
     message = manager.buffer.temporary_container[0]
@@ -32,12 +29,7 @@ def test_should_return_action():
     def approve_action():
         return "Approve"
 
-    manager.action_main = {
-        1: approve_action
-    }
-
-    def approve_action():
-        return "Approve"
+    manager.action_main = {1: approve_action}
 
     assert manager.execute_main(1) == "Approve"
 
@@ -64,4 +56,3 @@ def test_should_return_encrypted_message():
     message_to_encrypt = "E9:D :D 4964<[ BF6DE:@?n"
     expected = Text("this is check, question?", "Rot47", "Encrypted")
     assert manager.encryption(user_choice, message_to_encrypt) == expected
-
